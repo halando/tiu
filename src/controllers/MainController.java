@@ -16,8 +16,8 @@ public class MainController {
         });
     }
     private void startAdd(){
-        CreateFrame createFrame = new CreateFrame();
-        createFrame.setVisible(true);
-
+       CreateController createController = new CreateController(mainFrame);
+        CreateFrame createFrame =  createController.getCreateFrame();
+       createFrame.setVisible(true);
     }
     }

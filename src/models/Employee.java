@@ -11,6 +11,11 @@ public class Employee {
         this.city = city;
         this.salary = salary;
     }
+    public Employee( String name, String city, Double salary) {
+        this.name = name;
+        this.city = city;
+        this.salary = salary;
+    }
     public Integer getId() {
         return id;
     }
