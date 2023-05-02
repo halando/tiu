@@ -22,7 +22,20 @@ public class Database {
     });
      
     }
-    public Connection connectDb() throws ClassNotFoundException, SQLException{
+    public Connection connectDb(){
+        Connection con = null;
+        try {
+           con =  tryconnectDb();
+        } catch (ClassNotFoundException e) {
+           System.err.println("Hiba! A driver nem található!");
+           System.err.println(e.getMessage());
+        } catch(SQLException e){
+            System.err.println("Hiba! Az SQl utasítás végrehajtása sikertelen!");
+            System.err.println(e.getMessage());
+        }
+        return con;
+    }
+    public Connection tryconnectDb() throws ClassNotFoundException, SQLException{
         Connection con = null;
         String url = "jdbc:mariadb://localhost:3306/hum";
 
@@ -35,23 +48,15 @@ public class Database {
        
         con.close();
     }
-
-    // Hibakezelő metódus
-    public void insertEmployee(Employee emp) {
-        try {
-            tryinsertEmployee(emp);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Hiba! Nincs MariaDB driver betöltve!");
-            System.err.println(e.getMessage());
-
-        } catch (SQLException e) {
-            System.err.println("Hiba! Az adatbázishoz a kapcsolat sikertelen!");
-            System.err.println(e.getMessage());
+        public void insertEmployee(Employee emp){
+            try {
+                tryinsertEmployee(emp);
+            } catch (SQLException e) {
+               System.err.println("Hiba! A rekord beszúrása sikertelen!");
+            }
         }
-    }
-
-    // Ipari kód (hasznoskód)
-    public void tryinsertEmployee(Employee emp) throws SQLException, ClassNotFoundException {
+   
+    public void tryinsertEmployee(Employee emp) throws SQLException {
 
         Connection con = this.connectDb();
         String sql = " insert into employees" +
@@ -68,18 +73,18 @@ public class Database {
         
 
     } 
-    public ArrayList<Employee> getEmployees(){
-        ArrayList<Employee> emplist;
+    public ArrayList<Employee> getEmployees() {
+        ArrayList<Employee> emplist = null;
         try {
-           emplist = trygetEmployees();
-        } catch (Exception e) {
-            System.err.println("Hiba!A dolgozók lekérdezése sikertelen!");
-          emplist = null;
+           emplist =  trygetEmployees();
+        } catch (SQLException e) {
+           System.err.println("Hiba! A rekordok lekérdezése sikertelen!");
         }
         return emplist;
     }
+    
     public ArrayList<Employee> trygetEmployees() 
-    throws ClassNotFoundException, SQLException{
+    throws  SQLException{
         ArrayList<Employee> emplist = new ArrayList<>();
         Connection con = connectDb();
         String sql = "select * from employees";
@@ -99,4 +104,21 @@ public class Database {
         }
         return emplist;
     }
-}
+    public void deleteEmployee(int id){
+        try {
+            trydeleteEmployee(id);
+        } catch (SQLException e) {
+           System.err.println("Hiba! A rekord törlése során!");
+        }
+    }
+  
+    public void trydeleteEmployee(int id) throws SQLException{
+        System.out.println(id);
+        Connection con = connectDb();
+        String sql = "delete from employees where id=?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1, id);
+        pstmt.execute();
+    }
+   
+    }
