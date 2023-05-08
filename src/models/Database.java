@@ -48,29 +48,38 @@ public class Database {
        
         con.close();
     }
-        public void insertEmployee(Employee emp){
+        public int insertEmployee(Employee emp){
+            int id = 0;
             try {
-                tryinsertEmployee(emp);
+             id =   tryinsertEmployee(emp);
             } catch (SQLException e) {
                System.err.println("Hiba! A rekord beszúrása sikertelen!");
             }
+            return id;
         }
    
-    public void tryinsertEmployee(Employee emp) throws SQLException {
+    public int tryinsertEmployee(Employee emp) throws SQLException {
 
         Connection con = this.connectDb();
         String sql = " insert into employees" +
                 "(name, city, salary) values" +
                 "(?,?,?)";
         // 'Pali','Szeged', 347
-        PreparedStatement pstmt = con.prepareStatement(sql);
+        PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pstmt.setString(1, emp.name);
         pstmt.setString(2, emp.city);
         pstmt.setDouble(3, emp.salary);
         System.out.println(pstmt.toString());
-        pstmt.execute();
-        this.closeDb(con);
-        
+        pstmt.executeUpdate();
+        ResultSet rs = pstmt.getGeneratedKeys();
+        int id = 0;
+        if(rs.next()){
+             id = rs.getInt(1);
+            System.out.println(id);
+        }
+
+        this.closeDb(con); // con.close
+        return id; 
 
     } 
     public ArrayList<Employee> getEmployees() {
@@ -79,6 +88,7 @@ public class Database {
            emplist =  trygetEmployees();
         } catch (SQLException e) {
            System.err.println("Hiba! A rekordok lekérdezése sikertelen!");
+           System.err.println(e.getMessage());
         }
         return emplist;
     }
