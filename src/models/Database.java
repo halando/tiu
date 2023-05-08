@@ -123,7 +123,6 @@ public class Database {
     }
   
     public void trydeleteEmployee(int id) throws SQLException{
-        System.out.println(id);
         Connection con = connectDb();
         String sql = "delete from employees where id=?";
         PreparedStatement pstmt = con.prepareStatement(sql);
