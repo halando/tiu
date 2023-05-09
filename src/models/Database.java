@@ -58,7 +58,7 @@ public class Database {
             return id;
         }
    
-    public int tryinsertEmployee(Employee emp) throws SQLException {
+    private int tryinsertEmployee(Employee emp) throws SQLException {
 
         Connection con = this.connectDb();
         String sql = " insert into employees" +
@@ -128,6 +128,29 @@ public class Database {
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1, id);
         pstmt.execute();
+    }
+    public  void updateEmployee(Employee emp){
+        try {
+            tryupdateEmployee(emp);
+        } catch (SQLException e) {
+           System.err.println("Hiba! A rekord frissítése sikertelen!");
+           System.err.println(e.getMessage());
+        }
+    }
+  
+    public void tryupdateEmployee(Employee emp) throws SQLException{
+        Connection con = connectDb();
+        String sql = "update employees set " +
+        "name =?, city =?, salary =? " +
+        "where id =?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setString(1, emp.name);
+        pstmt.setString(2, emp.city);
+        pstmt.setDouble(3, emp.salary);
+        pstmt.setInt(4, emp.id);
+        pstmt.execute();
+        this.closeDb(con);
+       
     }
    
     }

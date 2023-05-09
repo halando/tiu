@@ -3,6 +3,7 @@ package controllers;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JTable;
 
 import models.CreateModel;
 import models.Database;
@@ -14,11 +15,12 @@ public class CreateController {
     CreateFrame createFrame;
     MainFrame mainFrame;
     CreateModel createModel;
+
     public CreateController(MainFrame mainFrame) {
-      
-       this.mainFrame = mainFrame;
-       this.createFrame = new CreateFrame( this.mainFrame);
-       this.createModel = new CreateModel();
+
+        this.mainFrame = mainFrame;
+        this.createFrame = new CreateFrame(this.mainFrame);
+        this.createModel = new CreateModel();
         this.handleEvents();
     }
 
@@ -34,39 +36,63 @@ public class CreateController {
     }
 
     private void startOperating() {
-      
-       
-        if(this.createModel.isAdding()){
-        startAdding();
-        }else{
+        System.out.println("Állapot: " + this.createModel.isAdding());
+        if (this.createModel.isAdding()) {
+            startAdding();
+        } else {
             startUpdate();
         }
 
-       
     }
-    private void startAdding(){
+
+    private void startAdding() {
         System.out.println("Hozzáadás ");
-        // String idStr = createFrame.getIdPanel().getValue();
-       //  Integer id = Integer.parseInt(idStr);
-         String nameStr = createFrame.getNamePanel().getValue();
-         String cityStr = createFrame.getCityPanel().getValue();
-         String salaryStr = createFrame.getSalaryPanel().getValue();
-         Double salary = Double.parseDouble(salaryStr);
-         Employee emp = new Employee( nameStr, cityStr, salary);
+        
+        String idStr = createFrame.getIdPanel().getValue();
+        String nameStr = createFrame.getNamePanel().getValue();
+        String cityStr = createFrame.getCityPanel().getValue();
+        String salaryStr = createFrame.getSalaryPanel().getValue();
+        Double salary = Double.parseDouble(salaryStr);
+       
+        Employee emp = new Employee(nameStr, cityStr, salary);
         Integer id = new Database().insertEmployee(emp);
         System.out.println(id);
-         Vector<String> empStr = new Vector<>();
-      
-        
-         empStr.add(id.toString());
-         empStr.add(nameStr);
-         empStr.add(cityStr);
-         empStr.add(salaryStr);
-         this.mainFrame.getModel().addRow(empStr);
-         this.createFrame.setVisible(false);
-         
+        Vector<String> empStr = new Vector<>();
+
+        empStr.add(id.toString());
+        empStr.add(nameStr);
+        empStr.add(cityStr);
+        empStr.add(salaryStr);
+        this.mainFrame.getModel().addRow(empStr);
+        this.createFrame.setVisible(false);
+
     }
-   private void startUpdate(){
-    System.out.println("Frissités árnyék eljárás");
-   }
+
+    private void startUpdate() {
+        
+     
+
+       String idStr = createFrame.getIdPanel().getValue();
+        String nameStr = createFrame.getNamePanel().getValue();
+        String cityStr = createFrame.getCityPanel().getValue();
+        String salaryStr = createFrame.getSalaryPanel().getValue();
+       Integer id = Integer.parseInt(idStr);
+        Double salary = Double.parseDouble(salaryStr);
+        
+        Employee emp = new Employee(id, nameStr, cityStr, salary);
+
+
+        new Database().updateEmployee(emp);
+
+        int selected = this.createModel.getSelected();
+        JTable table = this.mainFrame.getTable();
+
+       table.getModel().setValueAt(nameStr, selected, 1);
+       table.getModel().setValueAt(cityStr, selected, 2);
+       table.getModel().setValueAt(salaryStr, selected, 3);
+
+        this.createModel.setAdding(true);
+        this.createFrame.setVisible(false);
+
+    }
 }
