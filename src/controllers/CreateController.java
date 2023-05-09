@@ -92,6 +92,11 @@ public class CreateController {
        table.getModel().setValueAt(salaryStr, selected, 3);
 
         this.createModel.setAdding(true);
+        this.createFrame.setTitle("");
+        this.createFrame.getIdPanel().setValue("");
+        this.createFrame.getNamePanel().setValue("");
+        this.createFrame.getCityPanel().setValue("");
+        this.createFrame.getSalaryPanel().setValue("");
         this.createFrame.setVisible(false);
 
     }
